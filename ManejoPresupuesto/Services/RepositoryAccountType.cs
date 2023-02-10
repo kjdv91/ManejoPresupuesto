@@ -26,10 +26,11 @@ namespace ManejoPresupuesto.Services
         public async Task Create (AccountType accountType)
         {
             using var connection = new SqlConnection(connectionString);
-            
-            var id = await connection.QuerySingleAsync<int>(@"INSERT INTO AccountType (Nombre,UserId, Orden)
-                VALUES (@Name,@UserId,0);
-                SELECT SCOPE_IDENTITY();", accountType);
+            //llamo a sp
+            var id = await connection.QuerySingleAsync<int>("AccountTypes_Insert", 
+                new {userId = accountType.UserId,
+                    name = accountType.Name}, commandType: System.Data.CommandType.StoredProcedure);
+                
             
             accountType.AccountTypeId = id;
         }
